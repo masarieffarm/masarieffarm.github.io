@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="ayam.png" type="image/x-icon" />
+    <title>Mas Arief Farm</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+      /* Toggle Switch CSS */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #2196f3;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      .voice-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      /* Background blur class */
+      .blur-background {
+        filter: blur(5px); /* Adjust the blur strength */
+        transition: filter 0.3s ease; /* Smooth transition when removing blur */
+      }
+
+      .toggle-button {
+        appearance: none;
+        width: 60px;
+        height: 30px;
+        border-radius: 30px; /* Biar lebih bulat */
+        background-color: #ccc;
+        position: relative;
+        outline: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); /* Tambah bayangan */
+      }
+
+      .toggle-button:checked {
+        background-color: #4caf50;
+      }
+
+      .toggle-button:before {
+        content: "";
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: white;
+        transition: transform 0.3s ease;
+        left: 2px;
+        top: 50%; /* Posisikan vertikal di tengah */
+        transform: translateY(-50%);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Tambah bayangan */
+      }
+
+      .toggle-button:checked:before {
+        transform: translate(30px, -50%);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <div class="flex items-center mt-10 max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
+      <div class=" sm:w-1/7 h-auto mr-5"></div>
+    
+      <!-- Konten yang sudah ada -->
+      <div class="text-center bg-white shadow-lg rounded-lg p-5 flex-grow">
+        <h1 class="text-4xl font-bold text-gray-700">Dashboard</h1>
+      </div>
+    </div>
+    
+
+    <!-- Data Container -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 mx-auto mt-10 max-w-6xl"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+        <img src="temperature.png" alt="Temperature" class="mx-auto mb-4" />
+        <h2 class="text-xl font-semibold text-gray-700">Temperature</h2>
+        <p id="temperature" class="text-5xl font-bold text-blue-500">
+          Loading...
+        </p>
+        <br />
+        <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+          <h3 class="text-xs font-semibold text-gray-700">Notify</h3>
+          <br />
+          <input
+            type="checkbox"
+            class="toggle-button"
+            id="tempToggle"
+            onchange="checkNotifications()"
+          />
+          <!-- <span class="ml-5">Notify on High Temp</span> -->
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+        <img src="humidity.png" alt="Humidity" class="mx-auto mb-4" />
+        <h2 class="text-xl font-semibold text-gray-700">Humidity</h2>
+        <p id="humidity" class="text-5xl font-bold text-blue-500">Loading...</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+        <img src="smoke.png" alt="Gas Level" class="mx-auto mb-6" />
+        <h2 class="text-xl font-semibold text-gray-700">Gas Level</h2>
+        <p id="gas" class="text-5xl font-bold text-red-500">Loading...</p>
+        <br />
+        <!-- <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+          <h3 class="text-xs font-semibold text-gray-700">
+            Notify on High Gas
+          </h3>
+          <br />
+
+          <input
+            type="checkbox"
+            class="toggle-button"
+            id="gasToggle"
+            onchange="checkNotifications()"
+          />
+           <span class="ml-2">Notify on High Gas</span>
+        </div> -->
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+        <img src="bonfire.png" alt="Flame" class="mx-auto mb-5" />
+        <h2 class="text-xl font-semibold text-gray-700">Flame</h2>
+        <p id="flame" class="text-5xl font-bold text-red-500">Loading...</p>
+        <br />
+        <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+          <h3 class="text-xs font-semibold text-gray-700">
+            Notify on Flame Detection
+          </h3>
+
+          <br />
+          <input
+            type="checkbox"
+            class="toggle-button"
+            id="flameToggle"
+            onchange="checkNotifications()"
+          />
+          <!-- <span class="ml-2">Notify on Flame Detection</span> -->
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 mx-auto mt-10 max-w-6xl"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-700 text-center mb-4">
+          Temperature
+        </h2>
+        <canvas id="tempChart"></canvas>
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-700 text-center mb-4">
+          Humidity
+        </h2>
+        <canvas id="humidityChart"></canvas>
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-700 text-center mb-4">
+          Gas Level
+        </h2>
+        <canvas id="gasChart"></canvas>
+      </div>
+    </div>
+    <!-- HTML Structure for Automation Control -->
+<div class="flex flex-wrap justify-center gap-4 mt-8">
+  <!-- Card Section 1: Automation Control LED -->
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden w-full sm:w-80">
+    <div class="flex items-center p-5">
+      <img src="lamp.png" alt="Lamp Icon" class="w-16 h-16 mr-4" />
+      <div>
+        <h2 class="text-xl font-semibold text-gray-700">
+          Automation LED Control
+        </h2>
+        <p class="text-gray-500">Control lamps automatically</p>
+      </div>
+    </div>
+    <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="automationToggle"
+          onchange="toggleAutomation(this.checked)"
+        />
+        <span class="slider round"></span>
+      </label>
+      <span class="text-gray-700 font-medium">Automation LED</span>
+    </div>
+  </div>
+
+  <!-- Card Section 2: Voice Control -->
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden w-full sm:w-80">
+    <div class="flex items-center p-5">
+      <img src="voice.png" alt="Voice Control Icon" class="w-16 h-16 mr-4" />
+      <div>
+        <h2 class="text-xl font-semibold text-gray-700">
+          Voice LED <br>Control
+        </h2>
+        <p class="text-gray-500">Control with voice commands</p>
+      </div>
+    </div>
+    <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+      <label class="switch">
+        <input
+          type="checkbox"
+          id="voiceControlToggle"
+          onchange="toggleVoiceControl(this.checked)"
+        />
+        <span class="slider round"></span>
+      </label>
+      <span class="text-gray-700 font-medium">Voice Command</span>
+    </div>
+  </div>
+</div>
+
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-white shadow-lg rounded-lg p-6 mx-auto mt-10 max-w-4xl"
+>
+  <!-- LED Control Section -->
+  <div class="text-center">
+    <div class="flex items-center justify-center mb-4">
+      <img src="lamp.png" alt="Lamp" class="inline-block w-8 h-8 mr-2" />
+      <h2 class="text-xl font-semibold text-gray-700">LED1</h2>
+    </div>
+    <label class="switch">
+      <input
+        type="checkbox"
+        id="toggleLED1"
+        onchange="toggleLamp('LED1', this.checked)"
+      />
+      <span class="slider round"></span>
+    </label>
+    <div class="mt-4 space-y-2">
+      <label for="scheduleLED1" class="block text-gray-700">
+        Set Schedule:
+      </label>
+      <select
+        id="dayLED1"
+        class="border rounded p-1 w-full text-center"
+      >
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+      <div class="flex items-center justify-between gap-2">
+        <input
+          type="time"
+          id="turnOnLED1"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+        <input
+          type="time"
+          id="turnOffLED1"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+      </div>
+      <button
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        onclick="setSchedule('LED1')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 0v4m0-4h4m-4 0H8m1-8h10a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h10m-6 0v4m0 0V4m0 4H8m4 0h4"
+          />
+        </svg>
+        Set Schedule
+      </button>
+      <button
+        class="bg-red-500 text-white rounded px-3 py-1 mt-2 flex items-center text-sm justify-center"
+        onclick="removeSchedule('LED1')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+        Remove Schedule
+      </button>
+    </div>
+  </div>
+<div class="text-center">
+    <div class="flex items-center justify-center mb-4">
+      <img src="lamp.png" alt="Lamp" class="inline-block w-8 h-8 mr-2" />
+      <h2 class="text-xl font-semibold text-gray-700">LED2</h2>
+    </div>
+    <label class="switch">
+      <input
+        type="checkbox"
+        id="toggleLED2"
+        onchange="toggleLamp('LED2', this.checked)"
+      />
+      <span class="slider round"></span>
+    </label>
+    <div class="mt-4 space-y-2">
+      <label for="scheduleLED2" class="block text-gray-700">
+        Set Schedule:
+      </label>
+      <select
+        id="dayLED2"
+        class="border rounded p-1 w-full text-center"
+      >
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+      <div class="flex items-center justify-between gap-2">
+        <input
+          type="time"
+          id="turnOnLED2"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+        <input
+          type="time"
+          id="turnOffLED2"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+      </div>
+      <button
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        onclick="setSchedule('LED2')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 0v4m0-4h4m-4 0H8m1-8h10a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h10m-6 0v4m0 0V4m0 4H8m4 0h4"
+          />
+        </svg>
+        Set Schedule
+      </button>
+      <button
+        class="bg-red-500 text-white rounded px-3 py-1 mt-2 flex items-center text-sm justify-center"
+        onclick="removeSchedule('LED2')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+        Remove Schedule
+      </button>
+    </div>
+  </div>
+  <div class="text-center">
+    <div class="flex items-center justify-center mb-4">
+      <img src="lamp.png" alt="Lamp" class="inline-block w-8 h-8 mr-2" />
+      <h2 class="text-xl font-semibold text-gray-700">LED3</h2>
+    </div>
+    <label class="switch">
+      <input
+        type="checkbox"
+        id="toggleLED3"
+        onchange="toggleLamp('LED3', this.checked)"
+      />
+      <span class="slider round"></span>
+    </label>
+    <div class="mt-4 space-y-2">
+      <label for="scheduleLED3" class="block text-gray-700">
+        Set Schedule:
+      </label>
+      <select
+        id="dayLED3"
+        class="border rounded p-1 w-full text-center"
+      >
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+      <div class="flex items-center justify-between gap-2">
+        <input
+          type="time"
+          id="turnOnLED3"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+        <input
+          type="time"
+          id="turnOffLED3"
+          class="border rounded p-1 w-1/2 text-center"
+        />
+      </div>
+      <button
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        onclick="setSchedule('LED3')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 0v4m0-4h4m-4 0H8m1-8h10a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h10m-6 0v4m0 0V4m0 4H8m4 0h4"
+          />
+        </svg>
+        Set Schedule
+      </button>
+      <button
+        class="bg-red-500 text-white rounded px-3 py-1 mt-2 flex items-center text-sm justify-center"
+        onclick="removeSchedule('LED3')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+        Remove Schedule
+      </button>
+    </div>
+  </div>
+  <!-- Repeat the above block for LED2 and LED3 -->
+</div>
+
+
+    <!-- Modal Password -->
+    <!-- Modal Password -->
+    <!-- <div
+      id="passwordModal"
+      class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center backdrop-blur-sm"
+    >
+      <div class="bg-white flex rounded-lg shadow-lg">
+        <div class="w-1/2 p-4">
+      
+          <img
+            src="pw.png"
+            alt="Illustration"
+            class="w-full h-auto rounded-lg"
+          />
+        </div>
+        <div class="w-1/2 p-6">
+          <h2 class="text-xl font-semibold text-gray-700 mb-4">
+            Unlock Your Dahsboard
+          </h2>
+          <input
+            type="password"
+            id="passwordInput"
+            class="border rounded p-2 w-full mb-4"
+            placeholder="Enter your password"
+            onkeydown="checkEnter(event)"
+          />
+          <div class="flex justify-end">
+            <button
+              class="bg-black text-white px-4 py-2 rounded"
+              onclick="validatePassword()"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const correctPassword = "123456"; // Ubah sesuai password yang diinginkan
+      let authenticated = false; // Flag to track if the user is authenticated
+      let pendingLampId = ""; // Variable to store the lamp id before authentication
+      let pendingState = false; // Variable to store the lamp state before authentication
+
+      // Function to open the password modal for the first toggle
+      function openPasswordModal(lampId, state) {
+        if (authenticated) {
+          // If already authenticated, directly toggle the lamp
+          toggleLamp(lampId, state);
+        } else {
+          // If not authenticated, show the modal and store the lamp ID and state
+          pendingLampId = lampId;
+          pendingState = state;
+          document.getElementById("passwordModal").classList.remove("hidden");
+        }
+      }
+
+      // Function to close the modal
+      function closeModal() {
+        document.getElementById("passwordModal").classList.add("hidden");
+      }
+
+      // Function to validate the entered password
+      function validatePassword() {
+        const passwordInput = document.getElementById("passwordInput").value;
+        if (passwordInput === correctPassword) {
+          authenticated = true; // Set authenticated to true once password is correct
+          closeModal();
+          toggleLamp(pendingLampId, pendingState); // Proceed to toggle the pending lamp
+        } else {
+          alert("Incorrect password!");
+        }
+      }
+
+      // Function to toggle the lamp
+      function toggleLamp(lampId, state) {
+        // Logic for toggling lamp (replace with actual Firebase toggle or other logic)
+        console.log(`Lamp ${lampId} is now ${state ? "ON" : "OFF"}`);
+        // Example: Send the new state to Firebase
+        // firebase.database().ref('lamps/' + lampId).set(state);
+      }
+      // Always open password modal on page load
+      window.onload = function () {
+        // Password configuration
+        const correctPassword = "123456"; // Ubah sesuai password yang diinginkan
+        let authenticated = false; // Flag to track if the user is authenticated
+
+        localStorage.removeItem("passwordVerified"); // Reset password verification on reload
+        openPasswordModal();
+      };
+      function showPasswordModal() {
+        document.getElementById("passwordModal").classList.remove("hidden");
+        document.body.classList.add("blur-background"); // Adds blur to the background
+      }
+
+      // Validate password and remove blur when successful
+      function validatePassword() {
+        const password = document.getElementById("passwordInput").value;
+
+        if (password === "123456") {
+          // Replace with your actual validation
+          document.getElementById("passwordModal").classList.add("hidden");
+          document.body.classList.remove("blur-background"); // Removes blur
+          alert("Password Correct");
+        } else {
+          alert("Incorrect Password");
+        }
+      }
+
+      // Check if Enter key is pressed and trigger validation
+      function checkEnter(event) {
+        if (event.key === "Enter") {
+          validatePassword();
+        }
+      }
+
+    </script> -->
+
+    <script>
+      (function () {
+        emailjs.init("DBlMdqNvLDqagegw3");
+      })();
+
+      function sendEmail(subject, message) {
+        const templateParams = {
+          subject: subject,
+          message: message,
+          to_email: "masarieffarm@gmail.com",
+        };
+
+        emailjs
+          .send("service_xel0bqr", "template_dvze8vm", templateParams)
+          .then(
+            function (response) {
+              console.log(
+                "Email sent successfully!",
+                response.status,
+                response.text
+              );
+            },
+            function (error) {
+              console.error("Failed to send email. Error:", error);
+            }
+          );
+      }
+
+      // Membership functions for temperature
+      function temperatureMembership(temp) {
+        const dingin = temp >= 0 && temp <= 35 ? 1 : 0; // Dingin: [0, 35]
+        const normal = temp >= 36 && temp <= 40 ? 1 : 0; // Normal: [36, 40]
+        const panas = temp >= 41 && temp <= 50 ? 1 : 0; // Panas: [41, 50]
+
+        // Debug output for temperature membership
+        console.log(
+          `Temperature ${temp}°C -> Dingin: ${dingin}, Normal: ${normal}, Panas: ${panas}`
+        );
+
+        return { dingin, normal, panas };
+      }
+
+      // Membership functions for gas level
+      function gasLevelMembership(gas) {
+        const aman = gas >= 0 && gas <= 1000 ? 1 : 0; // Aman: [0, 1000]
+        const bahaya = gas >= 1001 && gas <= 4000 ? 1 : 0; // Bahaya: [1001, 4000]
+
+        // Debug output for gas level membership
+        console.log(`Gas level ${gas} -> Aman: ${aman}, Bahaya: ${bahaya}`);
+
+        return { aman, bahaya };
+      }
+
+      // Fuzzy Inference System
+      function fuzzyInference(temp, gas) {
+        const tempMf = temperatureMembership(temp);
+        const gasMf = gasLevelMembership(gas);
+
+        // Rule evaluations
+        const dinginAman = Math.min(tempMf.dingin, gasMf.aman); // Jika suhu dingin DAN gas aman
+        const normalAman = Math.min(tempMf.normal, gasMf.aman); // Jika suhu normal DAN gas aman
+        const panasBahaya = Math.min(tempMf.panas, gasMf.bahaya); // Jika suhu panas DAN gas bahaya
+
+        // Debug output for fuzzy rules
+        console.log("Rule Evaluations:");
+        console.log(`Dingin + Aman: ${dinginAman}`);
+        console.log(`Normal + Aman: ${normalAman}`);
+        console.log(`Panas + Bahaya: ${panasBahaya}`);
+
+        // Determine status and message
+        if (panasBahaya > dinginAman && panasBahaya > normalAman) {
+          return {
+            status: "Kandang Bahaya",
+            detail: `Temperatur panas dan level gas dalam kondisi bahaya.`,
+          };
+        } else if (normalAman >= dinginAman) {
+          return {
+            status: "Kandang Aman",
+            detail: `Temperatur normal dan level gas dalam batas aman.`,
+          };
+        } else {
+          return {
+            status: "Kandang Aman",
+            detail: `Temperatur dingin dan level gas dalam batas aman.`,
+          };
+        }
+      }
+
+      // Notification Checker
+      function checkNotifications() {
+        const temperature =
+          parseFloat(document.getElementById("temperature").innerText) || 0;
+        const gasLevel =
+          parseFloat(document.getElementById("gas").innerText) || 0;
+        const flameDetected =
+          document.getElementById("flame").innerText === "1";
+
+        console.log(
+          `Inputs -> Temperature: ${temperature}°C, Gas Level: ${gasLevel}`
+        );
+
+        // Fuzzy temperature and gas notification
+        if (document.getElementById("tempToggle").checked) {
+          const fuzzyOutput = fuzzyInference(temperature, gasLevel);
+          console.log(
+            `Fuzzy Output -> Status: ${fuzzyOutput.status}, Detail: ${fuzzyOutput.detail}`
+          );
+          sendEmail(
+            "Kandang Status",
+            `Status: ${fuzzyOutput.status} - ${fuzzyOutput.detail}`
+          );
+        }
+
+        // Flame detection notification
+        if (document.getElementById("flameToggle").checked) {
+          if (flameDetected) {
+            console.log("Flame Detected -> Sending Email Notification.");
+            sendEmail(
+              "Flame Detected",
+              "Warning: Flame has been detected in the kandang!"
+            );
+          } else {
+            console.log("No Flame Detected.");
+            sendEmail("Flame Status", "Status: Tidak Ada Api di Kandang.");
+          }
+        }
+      }
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("automationToggle");
+        if (toggle) {
+          toggle.checked = false;
+
+          toggle.addEventListener("change", function () {
+            console.log("Toggle changed:", toggle.checked);
+            window.toggleAutomation(toggle.checked);
+          });
+        }
+        console.log("Halaman telah dimuat dan inisialisasi dilakukan.");
+      });
+
+      window.automationActive = false;
+      window.automationInterval = null;
+
+      window.checkAutomation = function () {
+        console.log("Running checkAutomation");
+        if (!window.automationActive) return;
+
+        const temperature =
+          parseFloat(document.getElementById("temperature").innerText) || 0;
+        const gasLevel =
+          parseFloat(document.getElementById("gas").innerText) || 0;
+        const flameDetected =
+          document.getElementById("flame").innerText === "1"; // assuming 1 means "Ada Api"
+
+        console.log("Status sensor:", { temperature, gasLevel, flameDetected });
+
+        // Parameterized checks based on defined ranges
+        if (
+          (temperature >= 41 && temperature <= 50) || // Panas range for temperature
+          (gasLevel >= 1001 && gasLevel <= 4000) || // Bahaya range for gas level
+          flameDetected // Ada Api
+        ) {
+          window.controlLights(false);
+        } else if (
+          temperature >= 0 &&
+          temperature <= 35 && // Dingin range for temperature
+          gasLevel >= 0 &&
+          gasLevel <= 1000 && // Aman range for gas level
+          !flameDetected // Tidak Ada Api
+        ) {
+          window.controlLights(true);
+        }
+      };
+
+      window.controlLights = function (state) {
+        console.log("Changing light state to:", state);
+        const promises = [
+          set(led1Ref, state),
+          set(led2Ref, state),
+          set(led3Ref, state),
+        ];
+
+        Promise.all(promises)
+          .then(() => {
+            console.log(`Lampu LED ${state ? "dinyalakan" : "dimatikan"}.`);
+          })
+          .catch((error) => {
+            console.error(
+              `Error saat ${state ? "menyalakan" : "mematikan"} lampu: `,
+              error
+            );
+          });
+      };
+
+      window.toggleAutomation = function (isChecked) {
+        console.log("toggleAutomation called:", isChecked);
+        if (isChecked) {
+          window.automationActive = true;
+          window.checkAutomation();
+          window.automationInterval = setInterval(window.checkAutomation, 5000);
+        } else {
+          window.automationActive = false;
+          clearInterval(window.automationInterval);
+        }
+      };
+    </script>
+
+    <script></script>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        onValue,
+        set,
+      } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyARQ1jJJ6DTdoUR01W1_c9-_eNDtqppP5w",
+        authDomain: "masarieffarm-7704e.firebaseapp.com",
+        databaseURL: "https://masarieffarm-7704e-default-rtdb.firebaseio.com",
+        projectId: "masarieffarm-7704e",
+        storageBucket: "masarieffarm-7704e.appspot.com",
+        messagingSenderId: "840514901286",
+        appId: "1:840514901286:web:6dab1b8a4ba5193f13dde7",
+        measurementId: "G-6YJ00F4C51",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Reference to sensors and LED status
+      const humiRef = ref(database, "DHT_11/Humidity");
+      const tempRef = ref(database, "DHT_11/Temperature");
+      const gasRef = ref(database, "MQ2/GasLevel");
+      const flameRef = ref(database, "IR/Flame");
+      // const led1Ref = ref(database, "Lights/LED1");
+      // const led2Ref = ref(database, "Lights/LED2");
+      // const led3Ref = ref(database, "Lights/LED3");
+      window.led1Ref = ref(database, "Lights/LED1");
+      window.led2Ref = ref(database, "Lights/LED2");
+      window.led3Ref = ref(database, "Lights/LED3");
+      window.set = set;
+
+      // Listen for sensor data changes
+      onValue(humiRef, (snapshot) => {
+        const humidity = snapshot.val();
+        document.getElementById("humidity").innerHTML = humidity + "%";
+      });
+
+      onValue(tempRef, (snapshot) => {
+        const temperature = snapshot.val();
+        if (temperature !== null) {
+          document.getElementById("temperature").innerHTML =
+            temperature + "&#8451;";
+          checkNotifications();
+          checkAutomation(); // Memastikan otomasi berjalan setelah pembaruan suhu
+        }
+      });
+
+      onValue(gasRef, (snapshot) => {
+        const gasLevel = snapshot.val();
+        if (gasLevel !== null) {
+          document.getElementById("gas").innerHTML = gasLevel;
+          checkNotifications();
+          checkAutomation(); // Memastikan otomasi berjalan setelah pembaruan gas
+        } else {
+          document.getElementById("gas").innerHTML = "N/A";
+        }
+      });
+
+      onValue(flameRef, (snapshot) => {
+        const flameDetected = snapshot.val();
+        document.getElementById("flame").innerHTML =
+          flameDetected === 0 ? "No" : "Yes";
+        flameDetected === 1 ? "Yes" : "No";
+
+        checkNotifications();
+        checkAutomation();
+      });
+
+      // onValue(flameRef, (snapshot) => {
+      //     const flameDetected = snapshot.val();
+      //     document.getElementById("flame").innerHTML = flameDetected === 1 ? "No" : "Yes";
+      //     checkNotifications();
+      //     checkAutomation();  // Memastikan otomasi berjalan setelah pembaruan deteksi api
+      // });
+
+      // Listen for LED status and update toggle switch
+      onValue(led1Ref, (snapshot) => {
+        const ledState = snapshot.val();
+        document.getElementById("toggleLED1").checked = ledState;
+      });
+
+      onValue(led2Ref, (snapshot) => {
+        const ledState = snapshot.val();
+        document.getElementById("toggleLED2").checked = ledState;
+      });
+
+      onValue(led3Ref, (snapshot) => {
+        const ledState = snapshot.val();
+        document.getElementById("toggleLED3").checked = ledState;
+      });
+
+      // Function to toggle lamp state and update Firebase
+      // Function to toggle individual lamp and update Firebase
+      // window.toggleLamp = function (lampId, state) {
+      //   console.log(`Toggling ${lampId} to`, state);
+      //   const lampRef = ref(database, `Lights/${lampId}`);
+      //   set(lampRef, state)
+      //     .then(() => {
+      //       console.log(`${lampId} set to ${state} successfully.`);
+      //       alert(`${lampId} is now ${state ? "ON" : "OFF"}.`);
+      //     })
+      //     .catch((error) => {
+      //       console.error(`Error updating ${lampId} state:`, error);
+      //     });
+      // };
+
+      window.toggleLamp = function (lampId, state) {
+        console.log(`Toggling ${lampId} to`, state);
+        const lampRef = ref(database, `Lights/${lampId}`);
+        set(lampRef, state)
+          .then(() => {
+            console.log(`${lampId} is now ${state ? "ON" : "OFF"}.`);
+          })
+          .catch((error) => {
+            console.error(`Error updating ${lampId} state:`, error);
+          });
+      };
+
+      window.schedules = {}; // Objek untuk menyimpan jadwal
+
+      // Fungsi untuk menyimpan jadwal
+      window.setSchedule = function (lampId) {
+        const day = document.getElementById(`day${lampId}`).value;
+        const turnOnTime = document.getElementById(`turnOn${lampId}`).value;
+        const turnOffTime = document.getElementById(`turnOff${lampId}`).value;
+
+        if (!turnOnTime || !turnOffTime) {
+          alert("Please set both Turn ON and Turn OFF times.");
+          return;
+        }
+
+        // Cek apakah jadwal sudah ada, jika ada akan diganti
+        if (!schedules[day]) schedules[day] = {};
+        schedules[day][lampId] = { turnOn: turnOnTime, turnOff: turnOffTime };
+
+        alert(
+          `Schedule set for ${lampId} on ${day}: ON at ${turnOnTime}, OFF at ${turnOffTime}`
+        );
+        console.log(`Schedule set:`, schedules);
+      };
+
+      // Fungsi untuk menghapus jadwal
+      window.removeSchedule = function (lampId) {
+        const day = document.getElementById(`day${lampId}`).value;
+
+        // Cek apakah jadwal untuk lampu dan hari yang dipilih ada
+        if (schedules[day] && schedules[day][lampId]) {
+          delete schedules[day][lampId]; // Hapus jadwal
+          alert(`Schedule for ${lampId} on ${day} has been removed.`);
+          console.log(`Schedule removed for ${lampId} on ${day}.`);
+
+          // Reset input waktu
+          document.getElementById(`turnOn${lampId}`).value = "";
+          document.getElementById(`turnOff${lampId}`).value = "";
+        } else {
+          alert(`No schedule found for ${lampId} on ${day}.`);
+        }
+      };
+
+      // Fungsi untuk memeriksa jadwal secara otomatis
+      window.startScheduleChecker = function () {
+        setInterval(() => {
+          const now = new Date();
+          const day = now.toLocaleString("en-US", { weekday: "long" });
+          const currentTime = now.toTimeString().slice(0, 5); // Format HH:MM
+
+          if (schedules[day]) {
+            for (const lampId in schedules[day]) {
+              const { turnOn, turnOff } = schedules[day][lampId];
+              const lampElement = document.getElementById(`toggle${lampId}`);
+
+              if (!lampElement) {
+                console.error(`Element with ID toggle${lampId} not found.`);
+                continue;
+              }
+
+              const isOn = lampElement.checked;
+
+              // Hidupkan lampu sesuai jadwal
+              if (currentTime === turnOn && !isOn) {
+                toggleLamp(lampId, true);
+                lampElement.checked = true;
+                console.log(`${lampId} turned ON as per schedule.`);
+              }
+
+              // Matikan lampu sesuai jadwal
+              if (currentTime === turnOff && isOn) {
+                toggleLamp(lampId, false);
+                lampElement.checked = false;
+                console.log(`${lampId} turned OFF as per schedule.`);
+              }
+            }
+          }
+        }, 1000); // Periksa setiap detik
+        console.log("Schedule checker started.");
+      };
+
+      // Jalankan pemeriksaan jadwal ketika halaman dimuat
+      window.onload = function () {
+        startScheduleChecker();
+      };
+
+      // Function to start voice recognition
+      window.turnOnAllLamps = function () {
+        window.toggleLamp("LED1", true);
+        window.toggleLamp("LED2", true);
+        window.toggleLamp("LED3", true);
+        console.log("Semua lampu dinyalakan.");
+      };
+
+      // Fungsi untuk mematikan semua lampu
+      window.turnOffAllLamps = function () {
+        window.toggleLamp("LED1", false);
+        window.toggleLamp("LED2", false);
+        window.toggleLamp("LED3", false);
+        console.log("Semua lampu dimatikan.");
+      };
+
+      // Fungsi untuk memulai voice recognition dalam bahasa Indonesia
+      window.startRecognition = function () {
+        const recognition = new (window.SpeechRecognition ||
+          window.webkitSpeechRecognition)();
+        recognition.lang = "id-ID"; // Menggunakan bahasa Indonesia
+        recognition.interimResults = false;
+
+        recognition.onresult = function (event) {
+          const result = event.results[0][0].transcript.toLowerCase();
+          console.log("Input Suara:", result); // Tampilkan input suara di konsol
+
+          // Memproses hasil input suara dalam bahasa Indonesia
+          if (
+            result.includes("nyalakan lampu satu") ||
+            result.includes("nyalakan lampu 1") ||
+            result.includes("lampu 1 nyala")
+          ) {
+            window.toggleLamp("LED1", true);
+          } else if (
+            result.includes("matikan lampu satu") ||
+            result.includes("matikan lampu 1") ||
+            result.includes("lampu 1 mati")
+          ) {
+            window.toggleLamp("LED1", false);
+          } else if (
+            result.includes("nyalakan lampu dua") ||
+            result.includes("nyalakan lampu 2") ||
+            result.includes("lampu 2 nyala")
+          ) {
+            window.toggleLamp("LED2", true);
+          } else if (
+            result.includes("matikan lampu dua") ||
+            result.includes("matikan lampu 2") ||
+            result.includes("lampu 2 mati")
+          ) {
+            window.toggleLamp("LED2", false);
+          } else if (
+            result.includes("nyalakan lampu tiga") ||
+            result.includes("nyalakan lampu 3") ||
+            result.includes("lampu 3 nyala")
+          ) {
+            window.toggleLamp("LED3", true);
+          } else if (
+            result.includes("matikan lampu tiga") ||
+            result.includes("matikan lampu 3") ||
+            result.includes("lampu 3 mati")
+          ) {
+            window.toggleLamp("LED3", false);
+          } else if (result.includes("nyalakan semua lampu")) {
+            window.turnOnAllLamps(); // Perintah menyalakan semua lampu
+          } else if (result.includes("matikan semua lampu")) {
+            window.turnOffAllLamps(); // Perintah mematikan semua lampu
+          } else {
+            console.warn("Perintah tidak dikenali:", result); // Tampilkan peringatan di konsol
+            alert("Maaf, saya tidak mengerti perintah tersebut.");
+          }
+        };
+
+        recognition.onerror = function (event) {
+          console.error("Kesalahan pengenalan suara:", event.error);
+          alert("Terjadi kesalahan dalam pengenalan suara: " + event.error);
+        };
+
+        recognition.onend = function () {
+          if (document.getElementById("voiceControlToggle").checked) {
+            // Restart voice recognition jika toggle tetap diaktifkan
+            recognition.start();
+          }
+        };
+
+        recognition.start();
+      };
+
+      // Fungsi untuk mengaktifkan/menonaktifkan Voice Control via Toggle
+      window.toggleVoiceControl = function (isChecked) {
+        if (isChecked) {
+          console.log("Kontrol Suara diaktifkan");
+          window.startRecognition(); // Mulai voice recognition saat toggle diaktifkan
+        } else {
+          console.log("Kontrol Suara dinonaktifkan");
+          // Tidak ada tindakan khusus saat mematikan, recognition berhenti sendiri setelah onend
+        }
+      };
+
+      // // Fungsi untuk mengaktifkan/menonaktifkan Automation via Toggle
+      // window.toggleAutomation = function(isChecked) {
+      //     if (isChecked) {
+      //         console.log("Automation activated");
+      //         // Aktifkan logika otomasi di sini
+      //     } else {
+      //         console.log("Automation deactivated");
+      //         // Nonaktifkan logika otomasi di sini
+      //     }
+      // };
+      const tempCtx = document.getElementById("tempChart").getContext("2d");
+      const humidityCtx = document
+        .getElementById("humidityChart")
+        .getContext("2d");
+      const gasCtx = document.getElementById("gasChart").getContext("2d");
+
+      const tempChart = new Chart(tempCtx, {
+        type: "line",
+        data: {
+          labels: [], // Timestamps will go here
+          datasets: [
+            {
+              label: "Temperature (°C)",
+              data: [],
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: { display: true },
+            y: { beginAtZero: false },
+          },
+        },
+      });
+
+      const humidityChart = new Chart(humidityCtx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Humidity (%)",
+              data: [],
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: { display: true },
+            y: { beginAtZero: false },
+          },
+        },
+      });
+
+      const gasChart = new Chart(gasCtx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Gas Level",
+              data: [],
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: { display: true },
+            y: { beginAtZero: false },
+          },
+        },
+      });
+
+      // Firebase Script (use real data here)
+      const updateChart = (chart, value) => {
+        const now = new Date().toLocaleTimeString();
+        chart.data.labels.push(now);
+        chart.data.datasets[0].data.push(value);
+        if (chart.data.labels.length > 10) {
+          chart.data.labels.shift(); // Keep last 10 timestamps
+          chart.data.datasets[0].data.shift(); // Keep last 10 values
+        }
+        chart.update();
+      };
+
+      onValue(tempRef, (snapshot) => {
+        const temperature = snapshot.val();
+        document.getElementById("temperature").innerHTML =
+          temperature + "&#8451;";
+        updateChart(tempChart, temperature);
+      });
+
+      onValue(humiRef, (snapshot) => {
+        const humidity = snapshot.val();
+        document.getElementById("humidity").innerHTML = humidity + "%";
+        updateChart(humidityChart, humidity);
+      });
+
+      onValue(gasRef, (snapshot) => {
+        const gasLevel = snapshot.val();
+        document.getElementById("gas").innerHTML =
+          gasLevel !== null ? gasLevel : "N/A";
+        updateChart(gasChart, gasLevel);
+      });
+    </script>
+  </body>
+</html>
