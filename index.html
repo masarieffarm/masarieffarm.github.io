@@ -522,123 +522,77 @@
 </div>
 
 
-    <!-- Modal Password -->
-    <!-- Modal Password -->
-    <!-- <div
-      id="passwordModal"
-      class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center backdrop-blur-sm"
-    >
-      <div class="bg-white flex rounded-lg shadow-lg">
-        <div class="w-1/2 p-4">
-      
-          <img
-            src="pw.png"
-            alt="Illustration"
-            class="w-full h-auto rounded-lg"
-          />
-        </div>
-        <div class="w-1/2 p-6">
-          <h2 class="text-xl font-semibold text-gray-700 mb-4">
-            Unlock Your Dahsboard
-          </h2>
-          <input
-            type="password"
-            id="passwordInput"
-            class="border rounded p-2 w-full mb-4"
-            placeholder="Enter your password"
-            onkeydown="checkEnter(event)"
-          />
-          <div class="flex justify-end">
-            <button
-              class="bg-black text-white px-4 py-2 rounded"
-              onclick="validatePassword()"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
+  <div
+  id="dashboardPasswordModal"
+  class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center backdrop-blur-sm"
+>
+  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">
+      Unlock Dashboard
+    </h2>
+    <input
+      type="password"
+      id="dashboardPasswordInput"
+      class="border rounded p-2 w-full mb-4"
+      placeholder="Enter your password"
+      onkeydown="checkEnter(event)"
+    />
+    <div class="flex justify-end">
+      <button
+        class="bg-black text-white px-4 py-2 rounded"
+        onclick="validateDashboardPassword()"
+      >
+        Submit
+      </button>
     </div>
+  </div>
+</div>
 
     <script>
-      const correctPassword = "123456"; // Ubah sesuai password yang diinginkan
-      let authenticated = false; // Flag to track if the user is authenticated
-      let pendingLampId = ""; // Variable to store the lamp id before authentication
-      let pendingState = false; // Variable to store the lamp state before authentication
 
-      // Function to open the password modal for the first toggle
-      function openPasswordModal(lampId, state) {
-        if (authenticated) {
-          // If already authenticated, directly toggle the lamp
-          toggleLamp(lampId, state);
-        } else {
-          // If not authenticated, show the modal and store the lamp ID and state
-          pendingLampId = lampId;
-          pendingState = state;
-          document.getElementById("passwordModal").classList.remove("hidden");
-        }
-      }
+const dashboardPassword = "Dashboard123"; 
 
-      // Function to close the modal
-      function closeModal() {
-        document.getElementById("passwordModal").classList.add("hidden");
-      }
+// Fungsi untuk menampilkan modal password
+function openDashboardPasswordModal() {
+  document.getElementById("dashboardPasswordModal").classList.remove("hidden");
+}
 
-      // Function to validate the entered password
-      function validatePassword() {
-        const passwordInput = document.getElementById("passwordInput").value;
-        if (passwordInput === correctPassword) {
-          authenticated = true; // Set authenticated to true once password is correct
-          closeModal();
-          toggleLamp(pendingLampId, pendingState); // Proceed to toggle the pending lamp
-        } else {
-          alert("Incorrect password!");
-        }
-      }
+// Fungsi untuk menutup modal password
+function closeDashboardPasswordModal() {
+  document.getElementById("dashboardPasswordModal").classList.add("hidden");
+}
 
-      // Function to toggle the lamp
-      function toggleLamp(lampId, state) {
-        // Logic for toggling lamp (replace with actual Firebase toggle or other logic)
-        console.log(`Lamp ${lampId} is now ${state ? "ON" : "OFF"}`);
-        // Example: Send the new state to Firebase
-        // firebase.database().ref('lamps/' + lampId).set(state);
-      }
-      // Always open password modal on page load
-      window.onload = function () {
-        // Password configuration
-        const correctPassword = "123456"; // Ubah sesuai password yang diinginkan
-        let authenticated = false; // Flag to track if the user is authenticated
+// Fungsi untuk memvalidasi password dashboard
+function validateDashboardPassword() {
+  const input = document.getElementById("dashboardPasswordInput").value;
 
-        localStorage.removeItem("passwordVerified"); // Reset password verification on reload
-        openPasswordModal();
-      };
-      function showPasswordModal() {
-        document.getElementById("passwordModal").classList.remove("hidden");
-        document.body.classList.add("blur-background"); // Adds blur to the background
-      }
+  if (input === dashboardPassword) {
+    closeDashboardPasswordModal(); // Tutup modal password
+    showDashboardContent(); // Tampilkan konten dashboard
+  } else {
+    alert("Incorrect password! Please try again.");
+  }
+}
 
-      // Validate password and remove blur when successful
-      function validatePassword() {
-        const password = document.getElementById("passwordInput").value;
+// Fungsi untuk menampilkan konten dashboard
+function showDashboardContent() {
+  document.getElementById("dashboardContent").classList.remove("hidden");
+}
 
-        if (password === "123456") {
-          // Replace with your actual validation
-          document.getElementById("passwordModal").classList.add("hidden");
-          document.body.classList.remove("blur-background"); // Removes blur
-          alert("Password Correct");
-        } else {
-          alert("Incorrect Password");
-        }
-      }
+// Fungsi untuk memeriksa tombol Enter
+function checkEnter(event) {
+  if (event.key === "Enter") {
+    validateDashboardPassword();
+  }
+}
 
-      // Check if Enter key is pressed and trigger validation
-      function checkEnter(event) {
-        if (event.key === "Enter") {
-          validatePassword();
-        }
-      }
+// Buka modal password saat halaman dimuat
+window.onload = function () {
+  openDashboardPasswordModal();
+};
 
-    </script> -->
+
+    </script> 
 
     <script>
       (function () {
