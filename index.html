@@ -134,7 +134,7 @@
         </p>
         <br />
         <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
-          <h3 class="text-xs font-semibold text-gray-700">Notify</h3>
+          <h3 class="text-xs font-semibold text-gray-700">Notify Alert </h3>
           <br />
           <input
             type="checkbox"
@@ -175,7 +175,7 @@
         <h2 class="text-xl font-semibold text-gray-700">Flame</h2>
         <p id="flame" class="text-5xl font-bold text-red-500">Loading...</p>
         <br />
-        <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
+        <!-- <div class="flex justify-between items-center px-5 py-3 bg-gray-100">
           <h3 class="text-xs font-semibold text-gray-700">
             Notify on Flame Detection
           </h3>
@@ -187,8 +187,8 @@
             id="flameToggle"
             onchange="checkNotifications()"
           />
-          <!-- <span class="ml-2">Notify on Flame Detection</span> -->
-        </div>
+        <span class="ml-2">Notify on Flame Detection</span> 
+        </div> -->
       </div>
     </div>
 
@@ -520,9 +520,8 @@
   </div>
   <!-- Repeat the above block for LED2 and LED3 -->
 </div>
-
-
-  <div
+   
+<div
   id="dashboardPasswordModal"
   class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center backdrop-blur-sm"
 >
@@ -546,6 +545,13 @@
       </button>
     </div>
   </div>
+</div>
+
+<div id="dashboardContent" class="hidden">
+  <h1 class="text-2xl font-bold text-center mt-10">
+  </h1>
+  <p class="text-center text-gray-700 mt-4">
+  </p>
 </div>
 
     <script>
@@ -594,217 +600,239 @@ window.onload = function () {
 
     </script> 
 
-    <script>
-      (function () {
-        emailjs.init("DBlMdqNvLDqagegw3");
-      })();
+<script>
+  (function () {
+    emailjs.init("C6X23j_HpK2vyZiQ-");
+  })();
 
-      function sendEmail(subject, message) {
-        const templateParams = {
-          subject: subject,
-          message: message,
-          to_email: "masarieffarm@gmail.com",
-        };
+  function sendEmail(subject, message) {
+    const templateParams = {
+      subject: subject,
+      message: message,
+      to_email: "masarieffarm@gmail.com",
+    };
 
-        emailjs
-          .send("service_xel0bqr", "template_dvze8vm", templateParams)
-          .then(
-            function (response) {
-              console.log(
-                "Email sent successfully!",
-                response.status,
-                response.text
-              );
-            },
-            function (error) {
-              console.error("Failed to send email. Error:", error);
-            }
-          );
-      }
-
-      // Membership functions for temperature
-      function temperatureMembership(temp) {
-        const dingin = temp >= 0 && temp <= 35 ? 1 : 0; // Dingin: [0, 35]
-        const normal = temp >= 36 && temp <= 40 ? 1 : 0; // Normal: [36, 40]
-        const panas = temp >= 41 && temp <= 50 ? 1 : 0; // Panas: [41, 50]
-
-        // Debug output for temperature membership
-        console.log(
-          `Temperature ${temp}°C -> Dingin: ${dingin}, Normal: ${normal}, Panas: ${panas}`
-        );
-
-        return { dingin, normal, panas };
-      }
-
-      // Membership functions for gas level
-      function gasLevelMembership(gas) {
-        const aman = gas >= 0 && gas <= 1000 ? 1 : 0; // Aman: [0, 1000]
-        const bahaya = gas >= 1001 && gas <= 4000 ? 1 : 0; // Bahaya: [1001, 4000]
-
-        // Debug output for gas level membership
-        console.log(`Gas level ${gas} -> Aman: ${aman}, Bahaya: ${bahaya}`);
-
-        return { aman, bahaya };
-      }
-
-      // Fuzzy Inference System
-      function fuzzyInference(temp, gas) {
-        const tempMf = temperatureMembership(temp);
-        const gasMf = gasLevelMembership(gas);
-
-        // Rule evaluations
-        const dinginAman = Math.min(tempMf.dingin, gasMf.aman); // Jika suhu dingin DAN gas aman
-        const normalAman = Math.min(tempMf.normal, gasMf.aman); // Jika suhu normal DAN gas aman
-        const panasBahaya = Math.min(tempMf.panas, gasMf.bahaya); // Jika suhu panas DAN gas bahaya
-
-        // Debug output for fuzzy rules
-        console.log("Rule Evaluations:");
-        console.log(`Dingin + Aman: ${dinginAman}`);
-        console.log(`Normal + Aman: ${normalAman}`);
-        console.log(`Panas + Bahaya: ${panasBahaya}`);
-
-        // Determine status and message
-        if (panasBahaya > dinginAman && panasBahaya > normalAman) {
-          return {
-            status: "Kandang Bahaya",
-            detail: `Temperatur panas dan level gas dalam kondisi bahaya.`,
-          };
-        } else if (normalAman >= dinginAman) {
-          return {
-            status: "Kandang Aman",
-            detail: `Temperatur normal dan level gas dalam batas aman.`,
-          };
-        } else {
-          return {
-            status: "Kandang Aman",
-            detail: `Temperatur dingin dan level gas dalam batas aman.`,
-          };
-        }
-      }
-
-      // Notification Checker
-      function checkNotifications() {
-        const temperature =
-          parseFloat(document.getElementById("temperature").innerText) || 0;
-        const gasLevel =
-          parseFloat(document.getElementById("gas").innerText) || 0;
-        const flameDetected =
-          document.getElementById("flame").innerText === "1";
-
-        console.log(
-          `Inputs -> Temperature: ${temperature}°C, Gas Level: ${gasLevel}`
-        );
-
-        // Fuzzy temperature and gas notification
-        if (document.getElementById("tempToggle").checked) {
-          const fuzzyOutput = fuzzyInference(temperature, gasLevel);
+    emailjs
+      .send("service_a9o5vvg", "template_cnlxync", templateParams)
+      .then(
+        function (response) {
           console.log(
-            `Fuzzy Output -> Status: ${fuzzyOutput.status}, Detail: ${fuzzyOutput.detail}`
+            "Email sent successfully!",
+            response.status,
+            response.text
           );
-          sendEmail(
-            "Kandang Status",
-            `Status: ${fuzzyOutput.status} - ${fuzzyOutput.detail}`
-          );
+        },
+        function (error) {
+          console.error("Failed to send email. Error:", error);
         }
+      );
+  }
 
-        // Flame detection notification
-        if (document.getElementById("flameToggle").checked) {
-          if (flameDetected) {
-            console.log("Flame Detected -> Sending Email Notification.");
-            sendEmail(
-              "Flame Detected",
-              "Warning: Flame has been detected in the kandang!"
-            );
-          } else {
-            console.log("No Flame Detected.");
-            sendEmail("Flame Status", "Status: Tidak Ada Api di Kandang.");
-          }
-        }
-      }
-    </script>
+  // Membership functions for temperature
+  function temperatureMembership(temp) {
+    const dingin = temp >= 0 && temp <= 37 ? 1 : 0; // Dingin: [0, 37]
+    const normal = temp >= 36 && temp <= 40 ? 1 : 0; // Normal: [36, 40]
+    const panas = temp >= 39 && temp <= 50 ? 1 : 0; // Panas: [39, 50]
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggle = document.getElementById("automationToggle");
-        if (toggle) {
-          toggle.checked = false;
+    // Debug output for temperature membership
+    console.log(
+      `Temperature ${temp}°C -> Dingin: ${dingin}, Normal: ${normal}, Panas: ${panas}`
+    );
 
-          toggle.addEventListener("change", function () {
-            console.log("Toggle changed:", toggle.checked);
-            window.toggleAutomation(toggle.checked);
-          });
-        }
-        console.log("Halaman telah dimuat dan inisialisasi dilakukan.");
+    return { dingin, normal, panas };
+  }
+
+  // Membership functions for gas level
+  function gasLevelMembership(gas) {
+    const aman = gas >= 0 && gas <= 1050 ? 1 : 0; // Aman: [0, 1050]
+    const bahaya = gas >= 1000 && gas <= 4000 ? 1 : 0; // Bahaya: [1000, 4000]
+
+    // Debug output for gas level membership
+    console.log(`Gas level ${gas} -> Aman: ${aman}, Bahaya: ${bahaya}`);
+
+    return { aman, bahaya };
+  }
+
+  // Fuzzy Inference System
+function fuzzyInference(temp, gas) {
+  const tempMf = temperatureMembership(temp);
+  const gasMf = gasLevelMembership(gas);
+
+  // Rule evaluations
+  const dinginAman = Math.min(tempMf.dingin, gasMf.aman); // Jika suhu dingin DAN gas aman
+  const normalAman = Math.min(tempMf.normal, gasMf.aman); // Jika suhu normal DAN gas aman
+  const panasBahaya = Math.min(tempMf.panas, gasMf.bahaya); // Jika suhu panas DAN gas bahaya
+  const dinginBahaya = Math.min(tempMf.dingin, gasMf.bahaya); // Jika suhu dingin DAN gas bahaya
+  const normalBahaya = Math.min(tempMf.normal, gasMf.bahaya); // Jika suhu normal DAN gas bahaya
+
+  // Debug output for fuzzy rules
+  console.log("Rule Evaluations:");
+  console.log(`Dingin + Aman: ${dinginAman}`);
+  console.log(`Normal + Aman: ${normalAman}`);
+  console.log(`Panas + Bahaya: ${panasBahaya}`);
+  console.log(`Dingin + Bahaya: ${dinginBahaya}`);
+  console.log(`Normal + Bahaya: ${normalBahaya}`);
+
+  // Determine status and message
+  if (panasBahaya > dinginAman && panasBahaya > normalAman && panasBahaya > dinginBahaya && panasBahaya > normalBahaya) {
+    return {
+      status: "Kandang Bahaya",
+      detail: `Temperatur panas dan level gas dalam kondisi bahaya.`,
+    };
+  } else if (dinginBahaya > dinginAman && dinginBahaya > normalAman && dinginBahaya > normalBahaya) {
+    return {
+      status: "Kandang Bahaya",
+      detail: `Temperatur dingin tetapi level gas dalam kondisi bahaya.`,
+    };
+  } else if (normalBahaya > dinginAman && normalBahaya > normalAman) {
+    return {
+      status: "Kandang Bahaya",
+      detail: `Temperatur normal tetapi level gas dalam kondisi bahaya.`,
+    };
+  } else if (normalAman >= dinginAman) {
+    return {
+      status: "Kandang Aman",
+      detail: `Temperatur normal dan level gas dalam batas aman.`,
+    };
+  } else {
+    return {
+      status: "Kandang Aman",
+      detail: `Temperatur dingin dan level gas dalam batas aman.`,
+    };
+  }
+}
+
+  // Notification Checker
+  function checkNotifications() {
+    const flameDetected =
+      document.getElementById("flame").innerText === "1";
+    const temperature =
+      parseFloat(document.getElementById("temperature").innerText) || 0;
+    const gasLevel =
+      parseFloat(document.getElementById("gas").innerText) || 0;
+
+    console.log(
+      `Inputs -> Temperature: ${temperature}°C, Gas Level: ${gasLevel}`
+    );
+
+    // Fuzzy temperature and gas notification
+    if (document.getElementById("tempToggle").checked) {
+      const fuzzyOutput = fuzzyInference(temperature, gasLevel);
+      console.log(
+        `Fuzzy Output -> Status: ${fuzzyOutput.status}, Detail: ${fuzzyOutput.detail}`
+      );
+      sendEmail(
+        "Kandang Status",
+        `Status: ${fuzzyOutput.status} - ${fuzzyOutput.detail}`
+      );
+    }
+
+    // Flame detection notification
+    // if (document.getElementById("flameToggle").checked) {
+    //   if (flameDetected) {
+    //     console.log("Flame Detected.");
+    //     sendEmail("Flame Status", "Status: Ada Api Di Kandang");
+    //   } else {
+    //     console.log("No Flame Detected.");
+    //     sendEmail("Flame Status", "Status: Tidak Ada Api di Kandang.");
+    //   }
+    // }
+  }
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("automationToggle");
+
+    // Baca status terakhir dari localStorage
+    const savedStatus = localStorage.getItem("automationToggleStatus");
+    if (savedStatus === "true") {
+      toggle.checked = true;
+      window.toggleAutomation(true);
+    } else {
+      toggle.checked = false;
+      window.toggleAutomation(false);
+    }
+
+    // Tambahkan event listener untuk menyimpan status
+    toggle.addEventListener("change", function () {
+      console.log("Toggle changed:", toggle.checked);
+      localStorage.setItem("automationToggleStatus", toggle.checked);
+      window.toggleAutomation(toggle.checked);
+    });
+
+    console.log("Halaman telah dimuat dan status toggle diinisialisasi.");
+  });
+
+  window.automationActive = false;
+  window.automationInterval = null;
+
+  window.checkAutomation = function () {
+    console.log("Running checkAutomation");
+    if (!window.automationActive) return;
+
+    const temperature =
+      parseFloat(document.getElementById("temperature").innerText) || 0;
+    const gasLevel =
+      parseFloat(document.getElementById("gas").innerText) || 0;
+    const flameDetected =
+      document.getElementById("flame").innerText === "1"; // assuming 1 means "Ada Api"
+
+    console.log("Status sensor:", { temperature, gasLevel, flameDetected });
+
+    // Parameterized checks based on new ranges
+    if (
+      (temperature >= 39 && temperature <= 50) || // Panas range for temperature
+      (gasLevel >= 1000 && gasLevel <= 4000) || // Bahaya range for gas level
+      flameDetected // Ada Api
+    ) {
+      window.controlLights(false); // Matikan lampu dalam kondisi bahaya
+    } else if (
+      temperature >= 0 &&
+      temperature <= 37 && // Dingin range for temperature
+      gasLevel >= 0 &&
+      gasLevel <= 1050 && // Aman range for gas level
+      !flameDetected // Tidak Ada Api
+    ) {
+      window.controlLights(true); // Nyalakan lampu dalam kondisi aman
+    }
+  };
+
+  window.controlLights = function (state) {
+    console.log("Changing light state to:", state);
+    const promises = [
+      set(led1Ref, state),
+      set(led2Ref, state),
+      set(led3Ref, state),
+    ];
+
+    Promise.all(promises)
+      .then(() => {
+        console.log(`Lampu LED ${state ? "dinyalakan" : "dimatikan"}.`);
+      })
+      .catch((error) => {
+        console.error(
+          `Error saat ${state ? "menyalakan" : "mematikan"} lampu: `,
+          error
+        );
       });
+  };
 
+  window.toggleAutomation = function (isChecked) {
+    console.log("toggleAutomation called:", isChecked);
+    if (isChecked) {
+      window.automationActive = true;
+      window.checkAutomation();
+      window.automationInterval = setInterval(window.checkAutomation, 5000);
+    } else {
       window.automationActive = false;
-      window.automationInterval = null;
+      clearInterval(window.automationInterval);
+    }
+  };
+</script>
 
-      window.checkAutomation = function () {
-        console.log("Running checkAutomation");
-        if (!window.automationActive) return;
 
-        const temperature =
-          parseFloat(document.getElementById("temperature").innerText) || 0;
-        const gasLevel =
-          parseFloat(document.getElementById("gas").innerText) || 0;
-        const flameDetected =
-          document.getElementById("flame").innerText === "1"; // assuming 1 means "Ada Api"
-
-        console.log("Status sensor:", { temperature, gasLevel, flameDetected });
-
-        // Parameterized checks based on defined ranges
-        if (
-          (temperature >= 41 && temperature <= 50) || // Panas range for temperature
-          (gasLevel >= 1001 && gasLevel <= 4000) || // Bahaya range for gas level
-          flameDetected // Ada Api
-        ) {
-          window.controlLights(false);
-        } else if (
-          temperature >= 0 &&
-          temperature <= 35 && // Dingin range for temperature
-          gasLevel >= 0 &&
-          gasLevel <= 1000 && // Aman range for gas level
-          !flameDetected // Tidak Ada Api
-        ) {
-          window.controlLights(true);
-        }
-      };
-
-      window.controlLights = function (state) {
-        console.log("Changing light state to:", state);
-        const promises = [
-          set(led1Ref, state),
-          set(led2Ref, state),
-          set(led3Ref, state),
-        ];
-
-        Promise.all(promises)
-          .then(() => {
-            console.log(`Lampu LED ${state ? "dinyalakan" : "dimatikan"}.`);
-          })
-          .catch((error) => {
-            console.error(
-              `Error saat ${state ? "menyalakan" : "mematikan"} lampu: `,
-              error
-            );
-          });
-      };
-
-      window.toggleAutomation = function (isChecked) {
-        console.log("toggleAutomation called:", isChecked);
-        if (isChecked) {
-          window.automationActive = true;
-          window.checkAutomation();
-          window.automationInterval = setInterval(window.checkAutomation, 5000);
-        } else {
-          window.automationActive = false;
-          clearInterval(window.automationInterval);
-        }
-      };
-    </script>
-
-    <script></script>
 
     <!-- Firebase Scripts -->
     <script type="module">
@@ -931,89 +959,97 @@ window.onload = function () {
           });
       };
 
-      window.schedules = {}; // Objek untuk menyimpan jadwal
+// Cek apakah ada data jadwal di localStorage, jika ada muat ke schedules
+window.schedules = JSON.parse(localStorage.getItem('schedules')) || {}; 
 
-      // Fungsi untuk menyimpan jadwal
-      window.setSchedule = function (lampId) {
-        const day = document.getElementById(`day${lampId}`).value;
-        const turnOnTime = document.getElementById(`turnOn${lampId}`).value;
-        const turnOffTime = document.getElementById(`turnOff${lampId}`).value;
+// Fungsi untuk menyimpan jadwal
+window.setSchedule = function (lampId) {
+  const day = document.getElementById(`day${lampId}`).value;
+  const turnOnTime = document.getElementById(`turnOn${lampId}`).value;
+  const turnOffTime = document.getElementById(`turnOff${lampId}`).value;
 
-        if (!turnOnTime || !turnOffTime) {
-          alert("Please set both Turn ON and Turn OFF times.");
-          return;
+  if (!turnOnTime || !turnOffTime) {
+    alert("Please set both Turn ON and Turn OFF times.");
+    return;
+  }
+
+  // Cek apakah jadwal sudah ada, jika ada akan diganti
+  if (!window.schedules[day]) window.schedules[day] = {};
+  window.schedules[day][lampId] = { turnOn: turnOnTime, turnOff: turnOffTime };
+
+  // Simpan ke localStorage setiap kali jadwal diubah
+  localStorage.setItem('schedules', JSON.stringify(window.schedules));
+
+  alert(
+    `Schedule set for ${lampId} on ${day}: ON at ${turnOnTime}, OFF at ${turnOffTime}`
+  );
+  console.log(`Schedule set:`, window.schedules);
+};
+
+// Fungsi untuk menghapus jadwal
+window.removeSchedule = function (lampId) {
+  const day = document.getElementById(`day${lampId}`).value;
+
+  // Cek apakah jadwal untuk lampu dan hari yang dipilih ada
+  if (window.schedules[day] && window.schedules[day][lampId]) {
+    delete window.schedules[day][lampId]; // Hapus jadwal
+    // Simpan perubahan ke localStorage
+    localStorage.setItem('schedules', JSON.stringify(window.schedules));
+
+    alert(`Schedule for ${lampId} on ${day} has been removed.`);
+    console.log(`Schedule removed for ${lampId} on ${day}.`);
+
+    // Reset input waktu
+    document.getElementById(`turnOn${lampId}`).value = "";
+    document.getElementById(`turnOff${lampId}`).value = "";
+  } else {
+    alert(`No schedule found for ${lampId} on ${day}.`);
+  }
+};
+
+// Fungsi untuk memeriksa jadwal secara otomatis
+window.startScheduleChecker = function () {
+  setInterval(() => {
+    const now = new Date();
+    const day = now.toLocaleString("en-US", { weekday: "long" });
+    const currentTime = now.toTimeString().slice(0, 5); // Format HH:MM
+
+    if (window.schedules[day]) {
+      for (const lampId in window.schedules[day]) {
+        const { turnOn, turnOff } = window.schedules[day][lampId];
+        const lampElement = document.getElementById(`toggle${lampId}`);
+
+        if (!lampElement) {
+          console.error(`Element with ID toggle${lampId} not found.`);
+          continue;
         }
 
-        // Cek apakah jadwal sudah ada, jika ada akan diganti
-        if (!schedules[day]) schedules[day] = {};
-        schedules[day][lampId] = { turnOn: turnOnTime, turnOff: turnOffTime };
+        const isOn = lampElement.checked;
 
-        alert(
-          `Schedule set for ${lampId} on ${day}: ON at ${turnOnTime}, OFF at ${turnOffTime}`
-        );
-        console.log(`Schedule set:`, schedules);
-      };
-
-      // Fungsi untuk menghapus jadwal
-      window.removeSchedule = function (lampId) {
-        const day = document.getElementById(`day${lampId}`).value;
-
-        // Cek apakah jadwal untuk lampu dan hari yang dipilih ada
-        if (schedules[day] && schedules[day][lampId]) {
-          delete schedules[day][lampId]; // Hapus jadwal
-          alert(`Schedule for ${lampId} on ${day} has been removed.`);
-          console.log(`Schedule removed for ${lampId} on ${day}.`);
-
-          // Reset input waktu
-          document.getElementById(`turnOn${lampId}`).value = "";
-          document.getElementById(`turnOff${lampId}`).value = "";
-        } else {
-          alert(`No schedule found for ${lampId} on ${day}.`);
+        // Hidupkan lampu sesuai jadwal
+        if (currentTime === turnOn && !isOn) {
+          toggleLamp(lampId, true);
+          lampElement.checked = true;
+          console.log(`${lampId} turned ON as per schedule.`);
         }
-      };
 
-      // Fungsi untuk memeriksa jadwal secara otomatis
-      window.startScheduleChecker = function () {
-        setInterval(() => {
-          const now = new Date();
-          const day = now.toLocaleString("en-US", { weekday: "long" });
-          const currentTime = now.toTimeString().slice(0, 5); // Format HH:MM
+        // Matikan lampu sesuai jadwal
+        if (currentTime === turnOff && isOn) {
+          toggleLamp(lampId, false);
+          lampElement.checked = false;
+          console.log(`${lampId} turned OFF as per schedule.`);
+        }
+      }
+    }
+  }, 1000); // Periksa setiap detik
+  console.log("Schedule checker started.");
+};
 
-          if (schedules[day]) {
-            for (const lampId in schedules[day]) {
-              const { turnOn, turnOff } = schedules[day][lampId];
-              const lampElement = document.getElementById(`toggle${lampId}`);
+// Jalankan pemeriksaan jadwal ketika halaman dimuat
+window.onload = function () {
+  startScheduleChecker();
+};
 
-              if (!lampElement) {
-                console.error(`Element with ID toggle${lampId} not found.`);
-                continue;
-              }
-
-              const isOn = lampElement.checked;
-
-              // Hidupkan lampu sesuai jadwal
-              if (currentTime === turnOn && !isOn) {
-                toggleLamp(lampId, true);
-                lampElement.checked = true;
-                console.log(`${lampId} turned ON as per schedule.`);
-              }
-
-              // Matikan lampu sesuai jadwal
-              if (currentTime === turnOff && isOn) {
-                toggleLamp(lampId, false);
-                lampElement.checked = false;
-                console.log(`${lampId} turned OFF as per schedule.`);
-              }
-            }
-          }
-        }, 1000); // Periksa setiap detik
-        console.log("Schedule checker started.");
-      };
-
-      // Jalankan pemeriksaan jadwal ketika halaman dimuat
-      window.onload = function () {
-        startScheduleChecker();
-      };
 
       // Function to start voice recognition
       window.turnOnAllLamps = function () {
@@ -1125,112 +1161,121 @@ window.onload = function () {
       //         // Nonaktifkan logika otomasi di sini
       //     }
       // };
-      const tempCtx = document.getElementById("tempChart").getContext("2d");
-      const humidityCtx = document
-        .getElementById("humidityChart")
-        .getContext("2d");
-      const gasCtx = document.getElementById("gasChart").getContext("2d");
+      // Ambil konteks chart
+const tempCtx = document.getElementById("tempChart").getContext("2d");
+const humidityCtx = document.getElementById("humidityChart").getContext("2d");
+const gasCtx = document.getElementById("gasChart").getContext("2d");
 
-      const tempChart = new Chart(tempCtx, {
-        type: "line",
-        data: {
-          labels: [], // Timestamps will go here
-          datasets: [
-            {
-              label: "Temperature (°C)",
-              data: [],
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgba(255, 99, 132, 1)",
-              borderWidth: 1,
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            x: { display: true },
-            y: { beginAtZero: false },
-          },
-        },
-      });
+// Cek apakah data sudah ada di localStorage, jika ada gunakan itu
+const savedTempData = JSON.parse(localStorage.getItem('tempChartData')) || { labels: [], data: [] };
+const savedHumidityData = JSON.parse(localStorage.getItem('humidityChartData')) || { labels: [], data: [] };
+const savedGasData = JSON.parse(localStorage.getItem('gasChartData')) || { labels: [], data: [] };
 
-      const humidityChart = new Chart(humidityCtx, {
-        type: "line",
-        data: {
-          labels: [],
-          datasets: [
-            {
-              label: "Humidity (%)",
-              data: [],
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            x: { display: true },
-            y: { beginAtZero: false },
-          },
-        },
-      });
+// Inisialisasi chart dengan data yang ada di localStorage atau kosong
+const tempChart = new Chart(tempCtx, {
+  type: "line",
+  data: {
+    labels: savedTempData.labels, // Gunakan data yang disimpan
+    datasets: [{
+      label: "Temperature (°C)",
+      data: savedTempData.data, // Gunakan data yang disimpan
+      backgroundColor: "rgba(255, 99, 132, 0.2)",
+      borderColor: "rgba(255, 99, 132, 1)",
+      borderWidth: 1,
+      fill: false,
+    }],
+  },
+  options: {
+    scales: {
+      x: { display: true },
+      y: { beginAtZero: false },
+    },
+  },
+});
 
-      const gasChart = new Chart(gasCtx, {
-        type: "line",
-        data: {
-          labels: [],
-          datasets: [
-            {
-              label: "Gas Level",
-              data: [],
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            x: { display: true },
-            y: { beginAtZero: false },
-          },
-        },
-      });
+const humidityChart = new Chart(humidityCtx, {
+  type: "line",
+  data: {
+    labels: savedHumidityData.labels,
+    datasets: [{
+      label: "Humidity (%)",
+      data: savedHumidityData.data,
+      backgroundColor: "rgba(54, 162, 235, 0.2)",
+      borderColor: "rgba(54, 162, 235, 1)",
+      borderWidth: 1,
+      fill: false,
+    }],
+  },
+  options: {
+    scales: {
+      x: { display: true },
+      y: { beginAtZero: false },
+    },
+  },
+});
 
-      // Firebase Script (use real data here)
-      const updateChart = (chart, value) => {
-        const now = new Date().toLocaleTimeString();
-        chart.data.labels.push(now);
-        chart.data.datasets[0].data.push(value);
-        if (chart.data.labels.length > 10) {
-          chart.data.labels.shift(); // Keep last 10 timestamps
-          chart.data.datasets[0].data.shift(); // Keep last 10 values
-        }
-        chart.update();
-      };
+const gasChart = new Chart(gasCtx, {
+  type: "line",
+  data: {
+    labels: savedGasData.labels,
+    datasets: [{
+      label: "Gas Level",
+      data: savedGasData.data,
+      backgroundColor: "rgba(75, 192, 192, 0.2)",
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWidth: 1,
+      fill: false,
+    }],
+  },
+  options: {
+    scales: {
+      x: { display: true },
+      y: { beginAtZero: false },
+    },
+  },
+});
 
-      onValue(tempRef, (snapshot) => {
-        const temperature = snapshot.val();
-        document.getElementById("temperature").innerHTML =
-          temperature + "&#8451;";
-        updateChart(tempChart, temperature);
-      });
+// Fungsi untuk memperbarui chart dan menyimpan data ke localStorage
+const updateChart = (chart, value, chartType) => {
+  const now = new Date().toLocaleTimeString();
+  chart.data.labels.push(now);
+  chart.data.datasets[0].data.push(value);
+  
+  // Simpan data chart ke localStorage setiap kali diperbarui
+  if (chartType === "temperature") {
+    localStorage.setItem('tempChartData', JSON.stringify({ labels: chart.data.labels, data: chart.data.datasets[0].data }));
+  } else if (chartType === "humidity") {
+    localStorage.setItem('humidityChartData', JSON.stringify({ labels: chart.data.labels, data: chart.data.datasets[0].data }));
+  } else if (chartType === "gas") {
+    localStorage.setItem('gasChartData', JSON.stringify({ labels: chart.data.labels, data: chart.data.datasets[0].data }));
+  }
 
-      onValue(humiRef, (snapshot) => {
-        const humidity = snapshot.val();
-        document.getElementById("humidity").innerHTML = humidity + "%";
-        updateChart(humidityChart, humidity);
-      });
+  if (chart.data.labels.length > 10) {
+    chart.data.labels.shift();
+    chart.data.datasets[0].data.shift();
+  }
+  chart.update();
+};
 
-      onValue(gasRef, (snapshot) => {
-        const gasLevel = snapshot.val();
-        document.getElementById("gas").innerHTML =
-          gasLevel !== null ? gasLevel : "N/A";
-        updateChart(gasChart, gasLevel);
-      });
+// Firebase Script (gunakan data yang nyata)
+onValue(tempRef, (snapshot) => {
+  const temperature = snapshot.val();
+  document.getElementById("temperature").innerHTML = temperature + "&#8451;";
+  updateChart(tempChart, temperature, "temperature");
+});
+
+onValue(humiRef, (snapshot) => {
+  const humidity = snapshot.val();
+  document.getElementById("humidity").innerHTML = humidity + "%";
+  updateChart(humidityChart, humidity, "humidity");
+});
+
+onValue(gasRef, (snapshot) => {
+  const gasLevel = snapshot.val();
+  document.getElementById("gas").innerHTML = gasLevel !== null ? gasLevel : "N/A";
+  updateChart(gasChart, gasLevel, "gas");
+});
+
     </script>
   </body>
 </html>
