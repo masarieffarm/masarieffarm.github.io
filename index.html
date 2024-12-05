@@ -311,7 +311,7 @@
         />
       </div>
       <button
-        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center setScheduleButton"
         onclick="setSchedule('LED1')"
       >
         <svg
@@ -394,7 +394,7 @@
         />
       </div>
       <button
-        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center setScheduleButton"
         onclick="setSchedule('LED2')"
       >
         <svg
@@ -477,7 +477,7 @@
         />
       </div>
       <button
-        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center"
+        class="bg-blue-500 text-white rounded px-3 py-1 flex items-center text-sm justify-center setScheduleButton"
         onclick="setSchedule('LED3')"
       >
         <svg
@@ -497,7 +497,7 @@
         Set Schedule
       </button>
       <button
-        class="bg-red-500 text-white rounded px-3 py-1 mt-2 flex items-center text-sm justify-center"
+        class="bg-red-500 text-white rounded px-3 py-1 mt-2 flex items-center text-sm justify-center "
         onclick="removeSchedule('LED3')"
       >
         <svg
@@ -553,6 +553,51 @@
   <p class="text-center text-gray-700 mt-4">
   </p>
 </div>
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+  const toggle = document.getElementById("automationToggle");
+  const scheduleButtons = document.querySelectorAll(".setScheduleButton");
+
+  // Baca status terakhir dari localStorage
+  const savedStatus = localStorage.getItem("automationToggleStatus");
+  if (savedStatus === "true") {
+    toggle.checked = true;
+    window.toggleAutomation(true);
+    disableScheduleButtons(true);
+  } else {
+    toggle.checked = false;
+    window.toggleAutomation(false);
+    disableScheduleButtons(false);
+  }
+
+  // Tambahkan event listener untuk menyimpan status
+  toggle.addEventListener("change", function () {
+    console.log("Toggle changed:", toggle.checked);
+    localStorage.setItem("automationToggleStatus", toggle.checked);
+    window.toggleAutomation(toggle.checked);
+    disableScheduleButtons(toggle.checked);
+  });
+
+  function disableScheduleButtons(disable) {
+    scheduleButtons.forEach((button) => {
+      if (disable) {
+        button.classList.add("cursor-not-allowed", "opacity-50");
+        button.setAttribute("disabled", true);
+        button.setAttribute(
+          "title",
+          "Nonaktifkan Toggle Automation terlebih dahulu untuk mengatur jadwal."
+        );
+      } else {
+        button.classList.remove("cursor-not-allowed", "opacity-50");
+        button.removeAttribute("disabled");
+        button.removeAttribute("title");
+      }
+    });
+  }
+});
+
+
+</script>
 
     <script>
 
@@ -596,8 +641,6 @@ function checkEnter(event) {
 window.onload = function () {
   openDashboardPasswordModal();
 };
-
-
     </script> 
 
 <script>
@@ -654,7 +697,7 @@ window.onload = function () {
   }
 
   // Fuzzy Inference System
-function fuzzyInference(temp, gas) {
+  function fuzzyInference(temp, gas) {
   const tempMf = temperatureMembership(temp);
   const gasMf = gasLevelMembership(gas);
 
@@ -739,7 +782,6 @@ function fuzzyInference(temp, gas) {
     // }
   }
 </script>
-
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -902,7 +944,7 @@ function fuzzyInference(temp, gas) {
       onValue(flameRef, (snapshot) => {
         const flameDetected = snapshot.val();
         document.getElementById("flame").innerHTML =
-          flameDetected === 0 ? "No" : "Yes";
+        flameDetected === 0 ? "No" : "Yes";
         flameDetected === 1 ? "Yes" : "No";
 
         checkNotifications();
@@ -1080,8 +1122,8 @@ window.onload = function () {
 
           // Memproses hasil input suara dalam bahasa Indonesia
           if (
-            result.includes("nyalakan lampu satu") ||
-            result.includes("nyalakan lampu 1") ||
+            result.includes("hidupkan lampu satu") ||
+            result.includes("hidupkan lampu 1") ||
             result.includes("lampu 1 nyala")
           ) {
             window.toggleLamp("LED1", true);
@@ -1092,8 +1134,8 @@ window.onload = function () {
           ) {
             window.toggleLamp("LED1", false);
           } else if (
-            result.includes("nyalakan lampu dua") ||
-            result.includes("nyalakan lampu 2") ||
+            result.includes("hidupkan lampu dua") ||
+            result.includes("hidupkan lampu 2") ||
             result.includes("lampu 2 nyala")
           ) {
             window.toggleLamp("LED2", true);
@@ -1104,8 +1146,8 @@ window.onload = function () {
           ) {
             window.toggleLamp("LED2", false);
           } else if (
-            result.includes("nyalakan lampu tiga") ||
-            result.includes("nyalakan lampu 3") ||
+            result.includes("hidupkan lampu tiga") ||
+            result.includes("hidupkan lampu 3") ||
             result.includes("lampu 3 nyala")
           ) {
             window.toggleLamp("LED3", true);
@@ -1115,7 +1157,7 @@ window.onload = function () {
             result.includes("lampu 3 mati")
           ) {
             window.toggleLamp("LED3", false);
-          } else if (result.includes("nyalakan semua lampu")) {
+          } else if (result.includes("hidupkan semua lampu")) {
             window.turnOnAllLamps(); // Perintah menyalakan semua lampu
           } else if (result.includes("matikan semua lampu")) {
             window.turnOffAllLamps(); // Perintah mematikan semua lampu
