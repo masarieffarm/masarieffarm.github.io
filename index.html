@@ -553,52 +553,109 @@
   <p class="text-center text-gray-700 mt-4">
   </p>
 </div>
+    
 <script>
- document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   const toggle = document.getElementById("automationToggle");
   const scheduleButtons = document.querySelectorAll(".setScheduleButton");
 
-  // Baca status terakhir dari localStorage
+  // Status apakah toggle aktif
+  let isAutomationActive = false;
+
+  // Status apakah sedang menyetel jadwal
+  let isScheduleSet = false;
+
+  // Baca status terakhir dari localStorage untuk toggle
   const savedStatus = localStorage.getItem("automationToggleStatus");
   if (savedStatus === "true") {
     toggle.checked = true;
     window.toggleAutomation(true);
-    disableScheduleButtons(true);
+    disableScheduleButtons(); // Nonaktifkan tombol Set Schedule jika toggle aktif
   } else {
     toggle.checked = false;
     window.toggleAutomation(false);
-    disableScheduleButtons(false);
   }
 
-  // Tambahkan event listener untuk menyimpan status
+  // Tambahkan event listener untuk toggle automation
   toggle.addEventListener("change", function () {
+    if (isScheduleSet) {
+      alert("Set Schedule telah diaktifkan. Nonaktifkan terlebih dahulu untuk mengubah Automation.");
+      toggle.checked = !toggle.checked; // Kembalikan ke status sebelumnya
+      return;
+    }
+
+    isAutomationActive = toggle.checked;
+
+    if (isAutomationActive) {
+      disableScheduleButtons(); // Nonaktifkan tombol Set Schedule
+    } else {
+      enableScheduleButtons(); // Aktifkan tombol Set Schedule
+    }
+
     console.log("Toggle changed:", toggle.checked);
     localStorage.setItem("automationToggleStatus", toggle.checked);
     window.toggleAutomation(toggle.checked);
-    disableScheduleButtons(toggle.checked);
   });
 
-  function disableScheduleButtons(disable) {
+  // Tambahkan event listener untuk tombol Set Schedule
+  scheduleButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      isScheduleSet = true; // Tandai bahwa jadwal telah disetel
+      disableToggle(); // Nonaktifkan toggle
+      alert("Set Schedule telah diaktifkan. Automation dinonaktifkan.");
+    });
+  });
+
+  // Fungsi untuk menonaktifkan tombol Set Schedule
+  function disableScheduleButtons() {
     scheduleButtons.forEach((button) => {
-      if (disable) {
-        button.classList.add("cursor-not-allowed", "opacity-50");
-        button.setAttribute("disabled", true);
-        button.setAttribute(
-          "title",
-          "Nonaktifkan Toggle Automation terlebih dahulu untuk mengatur jadwal."
-        );
-      } else {
-        button.classList.remove("cursor-not-allowed", "opacity-50");
-        button.removeAttribute("disabled");
-        button.removeAttribute("title");
-      }
+      button.setAttribute("disabled", true);
+      button.classList.add("opacity-50", "cursor-not-allowed");
     });
   }
+
+  // Fungsi untuk mengaktifkan tombol Set Schedule
+  function enableScheduleButtons() {
+    scheduleButtons.forEach((button) => {
+      button.removeAttribute("disabled");
+      button.classList.remove("opacity-50", "cursor-not-allowed");
+    });
+  }
+
+  // Fungsi untuk menonaktifkan toggle
+  function disableToggle() {
+    toggle.setAttribute("disabled", true);
+    toggle.parentElement.classList.add("opacity-50", "cursor-not-allowed");
+  }
+
+  // Fungsi untuk mengaktifkan kembali toggle jika dibutuhkan
+  window.resetScheduleState = function () {
+    isScheduleSet = false;
+    toggle.removeAttribute("disabled");
+    toggle.parentElement.classList.remove("opacity-50", "cursor-not-allowed");
+    enableScheduleButtons();
+  };
+
+  // Fungsi toggle automation (tetap dari kode sebelumnya)
+  window.automationActive = false;
+  window.automationInterval = null;
+
+  window.toggleAutomation = function (isChecked) {
+    console.log("toggleAutomation called:", isChecked);
+    if (isChecked) {
+      window.automationActive = true;
+      window.checkAutomation();
+      window.automationInterval = setInterval(window.checkAutomation, 5000);
+    } else {
+      window.automationActive = false;
+      clearInterval(window.automationInterval);
+    }
+  };
+
+  // Tambahkan kembali fungsi lainnya seperti checkAutomation, controlLights jika diperlukan
 });
 
-
 </script>
-
     <script>
 
 const dashboardPassword = "Dashboard123"; 
